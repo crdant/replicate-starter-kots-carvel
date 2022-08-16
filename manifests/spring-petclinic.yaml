@@ -1,21 +1,65 @@
+---
 apiVersion: kappctrl.k14s.io/v1alpha1
 kind: App
 metadata:
   name: spring-petclinic
 spec:
-  serviceAccountName: kapp-ns-admin
+  serviceAccountName: kotsadm
   fetch:
-    - git:
-        url: https://github.com/vmware-tanzu-labs/tdc-carvel-examples
-        ref: origin/main
-        subPath: app-ytt
+    - inline:
+        paths:
+         deployment.yaml: |
+            #@ load("@ytt:data", "data")
+            #@ def labels():
+            app: spring-petclinic
+            #@ end
+
+            ---
+            apiVersion: apps/v1
+            kind: Deployment
+            metadata:
+              namespace: #@ data.values.namespace
+              name: spring-petclinic
+            spec:
+              selector:
+                matchLabels: #@ labels()
+              template:
+                metadata:
+                  labels: #@ labels()
+                spec:
+                  containers:
+                  - name: spring-petclinic
+                    image: springio/petclinic:latest
+                    ports:
+                    - name: http
+                      containerPort: #@ data.values.app_port
+         service.yaml: |
+            #@ load("@ytt:data", "data")
+            #@ def labels():
+            app: spring-petclinic
+            #@ end
+
+            ---
+            apiVersion: v1
+            kind: Service
+            metadata:
+              namespace: #@ data.values.namespace
+              name: spring-petclinic
+              labels: #@ labels()
+            spec:
+              ports:
+              - port: #@ data.values.svc_port
+                targetPort: http
+              selector: #@ labels()
   template:
     - ytt:
         inline:
           paths:
-            values.yaml: |
+            values.yaml: | 
               #@data/values
               ---
-              namespace: test
+              svc_port: 80
+              app_port: 8080
+              namespace: repl{{ Namespace }}
   deploy:
     - kapp: {}
