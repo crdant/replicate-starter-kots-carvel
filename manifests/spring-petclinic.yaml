@@ -1,0 +1,21 @@
+apiVersion: kappctrl.k14s.io/v1alpha1
+kind: App
+metadata:
+  name: spring-petclinic
+spec:
+  serviceAccountName: kapp-ns-admin
+  fetch:
+    - git:
+        url: https://github.com/vmware-tanzu-labs/tdc-carvel-examples
+        ref: origin/main
+        subPath: app-ytt
+  template:
+    - ytt:
+        inline:
+          paths:
+            values.yaml: |
+              #@data/values
+              ---
+              namespace: test
+  deploy:
+    - kapp: {}

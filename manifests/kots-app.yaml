@@ -2,14 +2,14 @@
 apiVersion: kots.io/v1beta1
 kind: Application
 metadata:
-  name: example-nginx
+  name: spring-petclinic
 spec:
-  title: App Name
-  icon: https://raw.githubusercontent.com/cncf/artwork/master/projects/kubernetes/icon/color/kubernetes-icon-color.png
+  title: Spring Pet Clinic
+  icon: https://spring-petclinic.github.io/images/logo-spring.png
   statusInformers:
-    - deployment/example-nginx
+    - deployment/spring-petclinic
   ports:
-    - serviceName: "example-nginx"
+    - serviceName: "spring-petclinic"
       servicePort: 80
-      localPort: 8888
-      applicationUrl: "http://example-nginx"
+      localPort: 8080
+      applicationUrl: "http://spring-petclinic"
