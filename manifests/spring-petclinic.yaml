@@ -7,7 +7,9 @@ spec:
   serviceAccountName: kotsadm
   fetch:
   - imgpkgBundle:
-      image: registry.shortrib.dev/library/spring-petclinic-replicated:latest
+      image: registry.replicated.com/spring-pet-clinic-stinkbug/bundle@sha256:9fe8559d8b34e4750013eeb5b43c9ffaded2a53268d3b36b81ccd994f9acbce3
+      secretRef: 
+        name: replicated-registry
 
   template:
   - ytt:

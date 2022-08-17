@@ -2,12 +2,12 @@
 apiVersion: imgpkg.carvel.dev/v1alpha1
 images:
 - annotations:
-    kbld.carvel.dev/id: springio/petclinic:latest
+    kbld.carvel.dev/id: registry.replicated.com/spring-pet-clinic-stinkbug/petclinic
     kbld.carvel.dev/origins: |
       - resolved:
           tag: latest
-          url: springio/petclinic:latest
+          url: registry.replicated.com/spring-pet-clinic-stinkbug/petclinic
       - preresolved:
-          url: index.docker.io/springio/petclinic@sha256:fbb6f32dff6b4b05aa0bb4252a674a2084ecd26137793c88213385e62a6ea171
-  image: index.docker.io/springio/petclinic@sha256:fbb6f32dff6b4b05aa0bb4252a674a2084ecd26137793c88213385e62a6ea171
+          url: registry.replicated.com/spring-pet-clinic-stinkbug/petclinic@sha256:6a5c7ba0f125f61f73d89e308b20a7f792f0890578b7813366ffc1fa06dbbc82
+  image: registry.replicated.com/spring-pet-clinic-stinkbug/petclinic@sha256:6a5c7ba0f125f61f73d89e308b20a7f792f0890578b7813366ffc1fa06dbbc82
 kind: ImagesLock
