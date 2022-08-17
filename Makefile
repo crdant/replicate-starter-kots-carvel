@@ -1,7 +1,9 @@
 CHANNEL=$(shell basename $(shell pwd))
 
-REGISTRY := registry.shortrib.dev
-PROJECT  := library
+SRC_IMAGE := springio/petclinic:latest
+
+REGISTRY := registry.replicated.com
+PROJECT  := ${REPLICATED_APP}
 
 BUNDLE_DIR := ./bundle
 KOTS_DIR   := ./manifests
@@ -14,10 +16,13 @@ lint: $(KOTS_MANIFESTS)
 	@replicated release lint --yaml-dir $(KOTS_DIR)
 
 lock: $(BUNDLE_MANIFESTS)
-	@kbld -f $(BUNDLE_DIR) --imgpkg-lock-output $(BUNDLE_DIR)/.imgpkg/images.yml >/dev/null
+	@kbld --file $(BUNDLE_DIR) --imgpkg-lock-output $(BUNDLE_DIR)/.imgpkg/images.yml >/dev/null
 
-bundle: lock
-	@imgpkg push -b $(REGISTRY)/$(PROJECT)/$(CHANNEL) -f $(BUNDLE_DIR)
+image: lock
+	@imgpkg copy --image $(SRC_IMAGE) --to-repo $(REGISTRY)/$(PROJECT)/petclinic
+
+bundle: image
+	@imgpkg push --bundle $(REGISTRY)/$(PROJECT)/bundle --file $(BUNDLE_DIR)
 
 release: $(KOTS_MANIFESTS)
 	@replicated release create \

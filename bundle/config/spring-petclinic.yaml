@@ -19,10 +19,12 @@ spec:
     spec:
       containers:
       - name: spring-petclinic
-        image: springio/petclinic:latest
+        image: registry.replicated.com/spring-pet-clinic-stinkbug/petclinic
         ports:
         - name: http
           containerPort: #@ data.values.app_port
+      imagePullSecrets:
+      - name: replicated-registry
 ---
 apiVersion: v1
 kind: Service
