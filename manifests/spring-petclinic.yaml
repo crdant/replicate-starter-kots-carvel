@@ -1,32 +1,27 @@
 ---
-apiVersion: kappctrl.k14s.io/v1alpha1
-kind: App
+apiVersion: packaging.carvel.dev/v1alpha1
+kind: PackageInstall
 metadata:
   name: spring-petclinic
+  annotations:
+    ext.packaging.carvel.dev/fetch-0-secret-name: replicated-registry
 spec:
   serviceAccountName: kotsadm
-  fetch:
-  - imgpkgBundle:
-      image: registry.replicated.com/spring-pet-clinic-stinkbug/bundle@sha256:9fe8559d8b34e4750013eeb5b43c9ffaded2a53268d3b36b81ccd994f9acbce3
-      secretRef: 
-        name: replicated-registry
-
-  template:
-  - ytt:
-      paths:
-      - config/
-      inline:
-        paths:
-          values.yaml: |
-            #@data/values
-            ---
-            svc_port: repl{{ ConfigOption "service_port" | ParseInt }}
-            app_port: repl{{ ConfigOption "app_port" | ParseInt }}
-            namespace: repl{{ Namespace }}
-  - kbld:
-      paths:
-      - '-'
-      - .imgpkg/images.yml
-
-  deploy:
-    - kapp: {}
+  packageRef:
+    refName: spring-petclinic.spring.io
+    versionSelection:
+      constraints: 1.0.0
+  values:
+  - secretRef:
+      name: spring-petclinic-values
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: spring-petclinic-values
+stringData:
+  values.yaml: |
+    ---
+    svc_port: repl{{ ConfigOption "service_port" | ParseInt }}
+    app_port: repl{{ ConfigOption "app_port" | ParseInt }}
+    namespace: repl{{ Namespace }}
