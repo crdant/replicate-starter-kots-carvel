@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 ---
->>>>>>> da119a313f2fbe32e9eabfb6432ed1bb9df33982
 apiVersion: kappctrl.k14s.io/v1alpha1
 kind: App
 metadata:
@@ -9,60 +6,25 @@ metadata:
 spec:
   serviceAccountName: kotsadm
   fetch:
-    - inline:
+  - imgpkgBundle:
+      image: registry.shortrib.dev/library/spring-petclinic-replicated:latest
+
+  template:
+  - ytt:
+      paths:
+      - config/
+      inline:
         paths:
-         deployment.yaml: |
-            #@ load("@ytt:data", "data")
-            #@ def labels():
-            app: spring-petclinic
-            #@ end
-
+          values.yaml: |
+            #@data/values
             ---
-            apiVersion: apps/v1
-            kind: Deployment
-            metadata:
-              namespace: #@ data.values.namespace
-              name: spring-petclinic
-            spec:
-              selector:
-                matchLabels: #@ labels()
-              template:
-                metadata:
-                  labels: #@ labels()
-                spec:
-                  containers:
-                  - name: spring-petclinic
-                    image: springio/petclinic:latest
-                    ports:
-                    - name: http
-                      containerPort: #@ data.values.app_port
-         service.yaml: |
-            #@ load("@ytt:data", "data")
-            #@ def labels():
-            app: spring-petclinic
-            #@ end
-
-            ---
-            apiVersion: v1
-            kind: Service
-            metadata:
-              namespace: #@ data.values.namespace
-              name: spring-petclinic
-              labels: #@ labels()
-            spec:
-              ports:
-              - port: #@ data.values.svc_port
-                targetPort: http
-              selector: #@ labels()
-    - ytt:
-        inline:
-          paths:
-            values.yaml: |
-              #@data/values
-              ---
-              svc_port: 80
-              app_port: 8080
-              namespace: repl{{ Namespace }}
+            svc_port: repl{{ ConfigOption "service_port" | ParseInt }}
+            app_port: repl{{ ConfigOption "app_port" | ParseInt }}
+            namespace: repl{{ Namespace }}
+  - kbld:
+      paths:
+      - '-'
+      - .imgpkg/images.yml
 
   deploy:
     - kapp: {}

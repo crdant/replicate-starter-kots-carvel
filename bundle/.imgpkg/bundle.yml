@@ -1,0 +1,13 @@
+apiVersion: imgpkg.carvel.dev/v1alpha1
+kind: Bundle
+metadata:
+  name: spring-petclinic
+authors:
+- name: Spring Team
+  email: spring@vmware.com
+- name: Chuck D'Antonio
+  email: chuck@replicated.com
+websites:
+- url: springframework.io
+- url: replicated.com
+- url: kots.io

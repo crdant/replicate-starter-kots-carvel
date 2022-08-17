@@ -1,25 +1,30 @@
 CHANNEL=$(shell basename $(shell pwd))
 
-BUILD_DIR  := ./build
-SOURCE_DIR := ./manifests
+REGISTRY := registry.shortrib.dev
+PROJECT  := library
 
-SRCS      := $(shell find $(SOURCE_DIR) -name '*.yaml' -execdir basename '{}' ';')
-MANIFESTS := $(SRCS:%=$(BUILD_DIR)/%)
+BUNDLE_DIR := ./bundle
+KOTS_DIR   := ./manifests
 
-$(BUILD_DIR)/%.yaml: $(SOURCE_DIR)/%.yaml
-	ytt -f ytt -f $< > $@
 
-$(BUILD_DIR): $(MANIFESTS)
+BUNDLE_MANIFESTS := $(shell find $(BUNDLE_DIR) -name '*.yaml')
+KOTS_MANIFESTS := $(shell find $(KOTS_DIR) -name '*.yaml')
 
-lint: build
-	@replicated release lint --yaml-dir $(BUILD_DIR)
-	
-release: build
+lint: $(KOTS_MANIFESTS)
+	@replicated release lint --yaml-dir $(KOTS_DIR)
+
+lock: $(BUNDLE_MANIFESTS)
+	@kbld -f $(BUNDLE_DIR) --imgpkg-lock-output $(BUNDLE_DIR)/.imgpkg/images.yml >/dev/null
+
+bundle: lock
+	@imgpkg push -b $(REGISTRY)/$(PROJECT)/$(CHANNEL) -f $(BUNDLE_DIR)
+
+release: $(KOTS_MANIFESTS)
 	@replicated release create \
 		--app ${REPLICATED_APP} \
 		--token ${REPLICATED_API_TOKEN} \
 		--auto -y \
-		--yaml-dir build \
+		--yaml-dir $(KOTS_DIR) \
 		--promote $(CHANNEL)
 
 clean:
