@@ -1,0 +1,13 @@
+---
+apiVersion: imgpkg.carvel.dev/v1alpha1
+images:
+- annotations:
+    kbld.carvel.dev/id: springio/petclinic:latest
+    kbld.carvel.dev/origins: |
+      - resolved:
+          tag: latest
+          url: springio/petclinic:latest
+      - preresolved:
+          url: index.docker.io/springio/petclinic@sha256:fbb6f32dff6b4b05aa0bb4252a674a2084ecd26137793c88213385e62a6ea171
+  image: index.docker.io/springio/petclinic@sha256:fbb6f32dff6b4b05aa0bb4252a674a2084ecd26137793c88213385e62a6ea171
+kind: ImagesLock
