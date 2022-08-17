@@ -6,11 +6,12 @@ REGISTRY := registry.replicated.com
 PROJECT  := ${REPLICATED_APP}
 
 BUNDLE_DIR := ./bundle
+REPO_DIR := ./repository
 KOTS_DIR   := ./manifests
-
 
 BUNDLE_MANIFESTS := $(shell find $(BUNDLE_DIR) -name '*.yaml')
 KOTS_MANIFESTS := $(shell find $(KOTS_DIR) -name '*.yaml')
+REPO_MANIFESTS := $(shell find $(REPO_DIR) -name '*.yaml' -o -name '*.yml')
 
 lint: $(KOTS_MANIFESTS)
 	@replicated release lint --yaml-dir $(KOTS_DIR)
@@ -23,6 +24,9 @@ image: lock
 
 bundle: image
 	@imgpkg push --bundle $(REGISTRY)/$(PROJECT)/bundle --file $(BUNDLE_DIR)
+
+repository: $(REPO_MANIFESTS)
+	@imgpkg push --bundle $(REGISTRY)/$(PROJECT)/repository --file $(REPO_DIR)
 
 release: $(KOTS_MANIFESTS)
 	@replicated release create \

@@ -1,0 +1,38 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: spring-petclinic.spring.io.1.0.0
+spec:
+  refName: spring-petclinic.spring.io
+  version: 1.0.0
+  releaseNotes: |
+    Initial release of the Spring Pet Clinic app package
+  valuesSchema:
+    openAPIv3:
+      type: object
+      additionalProperties: false
+      properties:
+        svc_port:
+          type: integer
+          default: 80
+        app_port:
+          type: integer
+          default: 8080
+        namespace:
+          type: string
+          default: dev
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: registry.replicated.com/spring-pet-clinic-stinkbug/bundle
+      template:
+      - ytt:
+          paths:
+          - config/
+      - kbld:
+          paths:
+          - .imgpkg/images.yml
+          - '-'
+      deploy:
+      - kapp: {}

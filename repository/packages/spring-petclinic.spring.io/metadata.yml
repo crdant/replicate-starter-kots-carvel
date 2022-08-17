@@ -1,0 +1,11 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  # This will be the name of our package
+  name: spring-petclinic.spring.io
+spec:
+  displayName: "Spring Pet Clinic"
+  longDescription: "The canonical demonstration of Spring, deployed using Carvel and KOTS"
+  shortDescription: "SA sample Spring-based application"
+  categories:
+  - demo

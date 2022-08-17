@@ -1,0 +1,11 @@
+---
+apiVersion: packaging.carvel.dev/v1alpha1
+kind: PackageRepository
+metadata:
+  name: spring-petclinic-repository
+spec:
+  fetch:
+    imgpkgBundle:
+      image: registry.replicated.com/spring-pet-clinic-stinkbug/repository@sha256:b4eb1a669ef978dda9dc440a07c393f7db1b2af5803f9fbe25e159ff2d26e07c
+      secretRef:
+        name: replicated-registry

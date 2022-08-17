@@ -1,0 +1,7 @@
+---
+apiVersion: imgpkg.carvel.dev/v1alpha1
+images:
+- annotations:
+    kbld.carvel.dev/id: registry.replicated.com/spring-pet-clinic-stinkbug/bundle
+  image: registry.replicated.com/spring-pet-clinic-stinkbug/bundle@sha256:9fe8559d8b34e4750013eeb5b43c9ffaded2a53268d3b36b81ccd994f9acbce3
+kind: ImagesLock
